@@ -1,20 +1,20 @@
+from typing import Optional
+
+import numpy as np
+import pandas as pd
 from sklearn.base import BaseEstimator, ClassifierMixin
-from sklearn.utils.validation import check_X_y, check_array, check_is_fitted
 from sklearn.utils.multiclass import unique_labels
-from .run_llm_code import run_llm_code
+from sklearn.utils.validation import check_array, check_is_fitted, check_X_y
+
+from .caafe import generate_features
+from .data import get_X_y
+from .metrics import accuracy_metric, auc_metric
 from .preprocessing import (
+    make_dataset_numeric,
     make_datasets_numeric,
     split_target_column,
-    make_dataset_numeric,
 )
-from .data import get_X_y
-from .caafe import generate_features
-from .metrics import auc_metric, accuracy_metric
-import pandas as pd
-import numpy as np
-from typing import Optional
-import pandas as pd
-
+from .run_llm_code import run_llm_code
 
 
 class CAAFEClassifier(BaseEstimator, ClassifierMixin):
@@ -29,6 +29,7 @@ class CAAFEClassifier(BaseEstimator, ClassifierMixin):
     n_splits (int, optional): The number of cross-validation splits to use during feature generation. Defaults to 10.
     n_repeats (int, optional): The number of times to repeat the cross-validation during feature generation. Defaults to 2.
     """
+
     def __init__(
         self,
         base_classifier: Optional[object] = None,
@@ -40,9 +41,10 @@ class CAAFEClassifier(BaseEstimator, ClassifierMixin):
     ) -> None:
         self.base_classifier = base_classifier
         if self.base_classifier is None:
-            from tabpfn.scripts.transformer_prediction_interface import TabPFNClassifier
-            import torch
             from functools import partial
+
+            import torch
+            from tabpfn.scripts.transformer_prediction_interface import TabPFNClassifier
 
             self.base_classifier = TabPFNClassifier(
                 N_ensemble_configurations=16,
@@ -105,11 +107,17 @@ class CAAFEClassifier(BaseEstimator, ClassifierMixin):
         self.X_ = X
         self.y_ = y
 
-        if X.shape[0] > 3000 and self.base_classifier.__class__.__name__ == "TabPFNClassifier":
+        if (
+            X.shape[0] > 3000
+            and self.base_classifier.__class__.__name__ == "TabPFNClassifier"
+        ):
             print(
                 "WARNING: TabPFN may take a long time to run on large datasets. Consider using alternatives (e.g. RandomForestClassifier)"
             )
-        elif X.shape[0] > 10000 and self.base_classifier.__class__.__name__ == "TabPFNClassifier":
+        elif (
+            X.shape[0] > 10000
+            and self.base_classifier.__class__.__name__ == "TabPFNClassifier"
+        ):
             print("WARNING: CAAFE may take a long time to run on large datasets.")
 
         ds = [

@@ -1,11 +1,12 @@
 import os
 import pickle
-from .data import get_data_split
+
 from .caafe_evaluate import evaluate_dataset
+from .data import get_data_split
 from .feature_extension_baselines import (
-    extend_using_dfs,
     extend_using_autofeat,
     extend_using_caafe,
+    extend_using_dfs,
 )
 
 

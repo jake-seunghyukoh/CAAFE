@@ -13,7 +13,6 @@ def set_labels(
     y_tick_params=None,
     legend_title=None,
 ):
-
     axes.set_title("" if not title else title, fontsize="xx-large")
     axes.set_xlabel("" if not xlabel else xlabel, fontsize="x-large")
     axes.set_ylabel("" if not ylabel else ylabel, fontsize="x-large")

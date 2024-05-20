@@ -1,11 +1,12 @@
-import pandas as pd
-import torch
+import copy
+import os
+import re
+
 import numpy as np
 import openml
-import re
-import os
+import pandas as pd
+import torch
 from sklearn.model_selection import train_test_split
-import copy
 
 ### Kaggle Data Loading ###
 

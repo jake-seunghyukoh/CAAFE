@@ -1,11 +1,10 @@
 import copy
-import numpy as np
 
+import numpy as np
 import openai
 from sklearn.model_selection import RepeatedKFold
-from .caafe_evaluate import (
-    evaluate_dataset,
-)
+
+from .caafe_evaluate import evaluate_dataset
 from .run_llm_code import run_llm_code
 
 
@@ -110,11 +109,10 @@ def generate_features(
         return code
 
     if display_method == "markdown":
-        from IPython.display import display, Markdown
+        from IPython.display import Markdown, display
 
         display_method = lambda x: display(Markdown(x))
     else:
-
         display_method = print
 
     assert (
@@ -146,7 +144,7 @@ def generate_features(
         old_accs, old_rocs, accs, rocs = [], [], [], []
 
         ss = RepeatedKFold(n_splits=n_splits, n_repeats=n_repeats, random_state=0)
-        for (train_idx, valid_idx) in ss.split(df):
+        for train_idx, valid_idx in ss.split(df):
             df_train, df_valid = df.iloc[train_idx], df.iloc[valid_idx]
 
             # Remove target column from df_train
@@ -191,8 +189,9 @@ def generate_features(
             df_train_extended[ds[4][-1]] = target_train
             df_valid_extended[ds[4][-1]] = target_valid
 
+            import os
+            import sys
             from contextlib import contextmanager
-            import sys, os
 
             with open(os.devnull, "w") as devnull:
                 old_stdout = sys.stdout
